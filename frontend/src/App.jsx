@@ -1,47 +1,46 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from 'react';
+import { recommendations } from './data'; // This imports your "database"
+import './App.css';
 
 function App() {
-  // These "states" store what the tourist selects
-  const [days, setDays] = useState(1);
   const [city, setCity] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   const handleSearch = () => {
-    // This is where you will eventually link to your database/backend
-    alert(`Planning a ${days} day trip to ${city}!`);
+    // This is the core logic: filter the array based on the selected city
+    const results = recommendations.filter(item => item.city === city);
+    setFilteredData(results);
   };
 
   return (
-    <div className="container">
-      <h1>IndoGuide: Taiwan to Indonesia 🇮🇩</h1>
-      <p>Helping Indonesian tourists explore with ease.</p>
+    <div className="container" style={{ padding: '40px', fontFamily: 'Arial' }}>
+      <h1>🇮🇩 IndoGuide 2026</h1>
+      <p>Select a city to see our top recommendations.</p>
 
-      <div className="card">
-        <h3>Plan Your Trip</h3>
-        
-        <label>How many days will you stay?</label>
-        <input 
-          type="number" 
-          value={days} 
-          onChange={(e) => setDays(e.target.value)} 
-          min="1"
-        />
-
-        <label>Where do you want to go?</label>
-        <select onChange={(e) => setCity(e.target.value)} value={city}>
-          <option value="">-- Select a City --</option>
+      <div style={{ marginBottom: '20px' }}>
+        <select value={city} onChange={(e) => setCity(e.target.value)} style={{ padding: '10px' }}>
+          <option value="">-- Select City --</option>
           <option value="Bali">Bali</option>
           <option value="Jakarta">Jakarta</option>
           <option value="Yogyakarta">Yogyakarta</option>
-          <option value="Bandung">Bandung</option>
         </select>
-
-        <button onClick={handleSearch} style={{ marginTop: '20px' }}>
-          Get Recommendations
+        <button onClick={handleSearch} style={{ marginLeft: '10px', padding: '10px' }}>
+          Find Spots
         </button>
       </div>
+
+      <div className="results-grid" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+        {filteredData.map(item => (
+          <div key={item.id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px', width: '200px' }}>
+            <span style={{ fontSize: '12px', color: 'blue' }}>{item.type}</span>
+            <h3>{item.name}</h3>
+            <p style={{ fontSize: '14px' }}>{item.desc}</p>
+          </div>
+        ))}
+        {filteredData.length === 0 && city !== '' && <p>No spots found for this city yet!</p>}
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
